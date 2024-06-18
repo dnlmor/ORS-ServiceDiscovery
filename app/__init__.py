@@ -1,14 +1,20 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from app.consul import register_consul_service
 
+# Initialize extensions
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///services.db'
+
+    # Load configuration
+    app.config.from_object('config.Config')
+
+    # Initialize extensions
     db.init_app(app)
 
-    from app.routes import bp as routes_bp
-    app.register_blueprint(routes_bp)
+    # Register Consul service
+    register_consul_service(app)
 
     return app
