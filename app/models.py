@@ -1,6 +1,11 @@
-from . import db
+from sqlalchemy import Column, String, Integer, DateTime
+from .database import Base
+import datetime
 
-class Service(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    url = db.Column(db.String(200), nullable=False)
+class Service(Base):
+    __tablename__ = 'services'
+    id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    host = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
+    registered_at = Column(DateTime, default=datetime.datetime.utcnow)

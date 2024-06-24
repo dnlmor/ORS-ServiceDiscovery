@@ -1,20 +1,19 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from app.consul import register_consul_service
-
-# Initialize extensions
-db = SQLAlchemy()
+from .database import db_session, init_db
+from .controllers import service_discovery_blueprint
 
 def create_app():
     app = Flask(__name__)
-
-    # Load configuration
     app.config.from_object('config.Config')
+    
+    # Initialize the database
+    init_db()
+    
+    # Register the service discovery blueprint
+    app.register_blueprint(service_discovery_blueprint)
 
-    # Initialize extensions
-    db.init_app(app)
-
-    # Register Consul service
-    register_consul_service(app)
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
 
     return app
